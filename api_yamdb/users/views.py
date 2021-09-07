@@ -50,7 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def obtain_confirmation_code(request):
+def gen_confirmation_code(request):
 
     serializer = GenCodeSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -64,12 +64,12 @@ def obtain_confirmation_code(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user, created = User.objects.get_or_create(
+    user, is_created = User.objects.get_or_create(
         email=email,
         username=username
     )
 
-    if created:
+    if is_created:
         user.is_active = False
         user.save()
 
@@ -90,15 +90,16 @@ def obtain_confirmation_code(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def obtain_auth_token(request):
+def gen_access_token(request):
 
     serializer = GenTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-
-    username = serializer.validated_data.get('username')
-    user = get_object_or_404(User, username=username)
-
     confirmation_code = serializer.validated_data.get('confirmation_code')
+
+    user = get_object_or_404(
+        User,
+        username=serializer.validated_data.get('username')
+    )
 
     if not code_generator.check_token(user, confirmation_code):
         return Response(

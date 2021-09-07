@@ -1,5 +1,5 @@
 from django.urls import path, include
-from users.views import obtain_confirmation_code, obtain_auth_token
+from users.views import gen_confirmation_code, gen_access_token
 
 from rest_framework.routers import DefaultRouter
 
@@ -10,8 +10,8 @@ v1_router.register(r'users', UserViewSet, basename='users')
 
 
 auth_urls = [
-    path('signup/', obtain_confirmation_code, name='gen_confirmation_code'),
-    path('token/', obtain_auth_token, name='gen_token')
+    path('signup/', gen_confirmation_code, name='gen_confirmation_code'),
+    path('token/', gen_access_token, name='gen_access_token')
 ]
 
 urlpatterns = [
