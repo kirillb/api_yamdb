@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
 
 
-class GenCodeSerializer(serializers.Serializer):
+class SignupSerializer(serializers.Serializer):
     username = serializers.CharField(
         validators=(UniqueValidator(queryset=User.objects.all()),)
     )
