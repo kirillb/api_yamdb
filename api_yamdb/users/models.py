@@ -40,3 +40,6 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == Roles.MODERATOR
+
+    class Meta:
+        ordering = ('username',)
