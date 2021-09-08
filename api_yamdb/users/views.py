@@ -151,7 +151,9 @@ class SignupView(APIView):
         )
 
         return Response(
-            {'email': email, 'username': username},
+            {
+                'email': email, 'username': username
+            },
             status=status.HTTP_200_OK
         )
 
@@ -180,4 +182,9 @@ class TokenView(APIView):
         user.is_active = True
         user.save()
 
-        return Response({'token': str(AccessToken.for_user(user))})
+        return Response(
+            {
+                'token': str(AccessToken.for_user(user))
+            },
+            status=status.HTTP_200_OK
+        )
