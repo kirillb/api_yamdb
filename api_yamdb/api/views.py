@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets, permissions
+from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.permissions import IsAdmin, IsAdminOrReadOnly
@@ -44,7 +44,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
+        if self.request.method == 'GET':
             return TitleSerializerGet
         return TitleSerializer
 
