@@ -7,17 +7,29 @@ User = get_user_model()
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
         fields = ('name', 'slug')
+        model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Genre
         fields = ('name', 'slug')
+        model = Genre
 
 
-class TitleSerializers(serializers.ModelSerializer):
+class TitleSerializerGet(serializers.ModelSerializer):
+    genre = GenreSerializer(
+        read_only=True,
+        many=True,
+    )
+    category = CategorySerializer(read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+
+class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         many=True,
@@ -29,8 +41,8 @@ class TitleSerializers(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Title
         fields = '__all__'
+        model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -49,7 +61,7 @@ class CommentSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True
     )
-    
+
     class Meta:
         model = Comment
         exclude = ('review',)

@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, mixins, viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.permissions import IsAdmin, IsAdminOrReadOnly
 
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer, TitleSerializers)
+                          GenreSerializer, ReviewSerializer,
+                          TitleSerializer, TitleSerializerGet)
 
 
 class CreateListDestroy(mixins.CreateModelMixin,
@@ -29,19 +29,23 @@ class GenreViewSet(CreateListDestroy):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    search_fields = ('name',)
     filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializers
     pagination_class = PageNumberPagination
     permission_classes = (IsAdminOrReadOnly,)
-    
 
-class ReviewViewset(viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return TitleSerializerGet
+        return TitleSerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
 
@@ -58,7 +62,7 @@ class ReviewViewset(viewsets.ModelViewSet):
         )
 
 
-class CommentViewset(viewsets.ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
 
@@ -69,7 +73,7 @@ class CommentViewset(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         review = get_object_or_404(
-            Review, 
+            Review,
             id=self.kwargs.get('review_id'),
             title=self.kwargs.get('title_id')
         )
