@@ -6,9 +6,9 @@ from users.views import UserViewSet, SignupView, TokenView
 
 v1_router = DefaultRouter()
 v1_router.register(r'users', UserViewSet, basename='users')
-router.register(r'categories', CategoryViewSet, basename='categories')
-router.register(r'genres', GenreViewSet, basename='genres')
-router.register(r'titles', TitleViewSet, basename='titles')
+v1_router.register(r'categories', CategoryViewSet, basename='categories')
+v1_router.register(r'genres', GenreViewSet, basename='genres')
+v1_router.register(r'titles', TitleViewSet, basename='titles')
 
 
 auth_urls = [
