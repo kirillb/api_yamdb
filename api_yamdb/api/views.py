@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, mixins, permissions
+from rest_framework import viewsets, filters, mixins
 from rest_framework.pagination import PageNumberPagination
 
 from users.permissions import IsAdminOrReadOnly
