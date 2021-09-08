@@ -1,22 +1,16 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.views import APIView
-
+from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
 from users.permissions import IsAdmin
-from users.serializers import (
-    SignupSerializer,
-    GenTokenSerializer,
-    UserSerializer
-)
-
+from users.serializers import (GenTokenSerializer, SignupSerializer,
+                               UserSerializer)
 
 code_generator = PasswordResetTokenGenerator()
 
