@@ -2,8 +2,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.permissions import IsAdmin, IsAuthor, IsCreating, IsReadOnly
+
+from users.permissions import IsAdmin, IsAdminOrReadOnly, IsAuthor, IsModerator, IsReadOnly
 
 from .filters import TitleFilter
 from .serializers import (CategorySerializer, CommentSerializer,
@@ -52,7 +54,8 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
-    permission_classes = [IsReadOnly | IsAdmin | IsCreating | IsAuthor]
+    permission_classes = (IsAuthenticated | IsReadOnly,
+                          IsAuthor | IsAdminOrReadOnly)
 
     def get_queryset(self):
         title_id = self.kwargs['title_id']
@@ -70,7 +73,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
-    permission_classes = [IsReadOnly | IsAdmin | IsCreating | IsAuthor]
+    permission_classes = (IsAuthenticated | IsReadOnly,
+                          IsAuthor | IsModerator | IsAdminOrReadOnly)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')

@@ -6,10 +6,8 @@ class IsReadOnly(BasePermission):
     def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS
 
-
-class IsCreating(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.method == 'POST'
+    def has_object_permission(self, request, view, obj):
+        return request.method in permissions.SAFE_METHODS
 
 
 class IsAuthor(IsAuthenticated):
@@ -20,3 +18,25 @@ class IsAuthor(IsAuthenticated):
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin
+
+    def has_object_permission(self, request, view, obj):
+        return request.user.is_authenticated and request.user.is_admin
+
+
+class IsModerator(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_moderator
+
+    def has_object_permission(self, request, view, obj):
+        return request.user.is_authenticated and request.user.is_moderator
+
+
+class IsAdminOrReadOnly(BasePermission):
+
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
+                or (request.user.is_authenticated and request.user.is_admin))
+
+    def has_object_permission(self, request, view, obj):
+        return (request.method in permissions.SAFE_METHODS
+                or (request.user.is_authenticated and request.user.is_admin))
