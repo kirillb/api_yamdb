@@ -3,12 +3,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.permissions import IsAdmin, IsAdminOrReadOnly
+from users.permissions import IsAdmin, IsAuthor, IsCreating, IsReadOnly
 
 from .filters import TitleFilter
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleSerializer, TitleSerializerGet)
+                          GenreSerializer, ReviewSerializer, TitleSerializer,
+                          TitleSerializerGet)
 
 
 class CreateListDestroy(mixins.CreateModelMixin,
@@ -21,7 +21,7 @@ class CreateListDestroy(mixins.CreateModelMixin,
 class CategoryViewSet(CreateListDestroy):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = [IsAdmin | IsReadOnly]
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -30,7 +30,7 @@ class CategoryViewSet(CreateListDestroy):
 class GenreViewSet(CreateListDestroy):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = [IsAdmin | IsReadOnly]
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -39,7 +39,7 @@ class GenreViewSet(CreateListDestroy):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     pagination_class = PageNumberPagination
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = [IsAdmin | IsReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
@@ -52,6 +52,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [IsReadOnly | IsAdmin | IsCreating | IsAuthor]
 
     def get_queryset(self):
         title_id = self.kwargs['title_id']
@@ -69,6 +70,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [IsReadOnly | IsAdmin | IsCreating | IsAuthor]
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
