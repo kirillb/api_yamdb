@@ -79,6 +79,14 @@ class Review(models.Model):
         'Дата публикации', auto_now_add=True
     )
 
+    class Meta:
+        ordering = ('-pub_date',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'], name='one_review'
+            )
+        ]
+
 
 class Comment(models.Model):
     review = models.ForeignKey(
@@ -95,3 +103,6 @@ class Comment(models.Model):
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
+
+    class Meta:
+        ordering = ('-pub_date',)
