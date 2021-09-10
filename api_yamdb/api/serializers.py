@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from reviews.models import Category, Comment, Genre, Review, Title
@@ -24,10 +25,14 @@ class TitleSerializerGet(serializers.ModelSerializer):
         many=True,
     )
     category = CategorySerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def get_rating(self, obj):
+        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
 
 
 class TitleSerializer(serializers.ModelSerializer):
