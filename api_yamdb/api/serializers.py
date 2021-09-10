@@ -1,10 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.exceptions import ValidationError
 from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
+
+
+REPEATED_REVIEW_MESSAGE = 'Нельзя добавить второй отзыв на то же самое произведение'
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -58,15 +62,21 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+    def validate(self, data):
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        method = self.context['request'].method
+        if Review.objects.filter(
+            author=self.context['request'].user,
+            title=title
+        ).exists() and method == 'POST':
+            raise ValidationError(REPEATED_REVIEW_MESSAGE)
+
+        return data
+
     class Meta:
         model = Review
         exclude = ('title',)
-        constraints = [
-            UniqueTogetherValidator(
-                fields=['author', 'title'],
-                queryset=Review.objects.all()
-            )
-        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
