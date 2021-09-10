@@ -5,5 +5,4 @@ djangorestframework-simplejwt
 pytest==6.2.4
 pytest-django==4.4.0
 pytest-pythonpath==0.7.3
-pip install django-filter
-django-filter~=2.4.0
+django-filter=2.4.0
