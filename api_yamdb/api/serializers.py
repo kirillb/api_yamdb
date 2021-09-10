@@ -8,7 +8,7 @@ from reviews.models import Category, Comment, Genre, Review, Title
 User = get_user_model()
 
 
-REPEATED_REVIEW_MESSAGE = 'Нельзя добавить второй отзыв на то же самое произведение'
+REPEATED_REVIEW_MESSAGE = 'На одно произведение можно добавить один отзыв'
 
 
 class CategorySerializer(serializers.ModelSerializer):
