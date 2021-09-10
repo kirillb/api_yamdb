@@ -12,10 +12,10 @@ class Command(BaseCommand):
     help = 'Load yamdb data from .csv files'
 
     def load_raw(self, file_name, obj):
-        self.stdout.write(f"    Loading {file_name}...", ending="")
+        self.stdout.write(f'    Loading {file_name}...', ending='')
         obj.objects.all().delete()
         with open(file_name) as f:
-            lines = list(csv.reader(f, delimiter=","))
+            lines = list(csv.reader(f, delimiter=','))
             fields = lines[0]
             for line in lines[1:]:
                 values = line
@@ -29,14 +29,14 @@ class Command(BaseCommand):
                     kwargs['author'] = get_object_or_404(
                         User,
                         id=kwargs['author']
-                    )        
+                    )
                 obj.objects.get_or_create(**kwargs)
         self.stdout.write('Done')
 
     def load_genre_title(self, file_name):
         self.stdout.write(f'   Loading {file_name}...', ending='')
         with open(file_name) as f:
-            lines = list(csv.reader(f, delimiter=","))
+            lines = list(csv.reader(f, delimiter=','))
             fields = lines[0]
             for line in lines[1:]:
                 values = line
@@ -61,7 +61,7 @@ class Command(BaseCommand):
             )
             return
 
-        self.stdout.write(f"Loading .csv files from {full_path_loc}...")
+        self.stdout.write(f'Loading .csv files from {full_path_loc}...')
 
         self.load_raw(full_path_loc + '/category.csv', Category)
         self.load_raw(full_path_loc + '/genre.csv', Genre)
