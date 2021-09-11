@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from api.validators import year_validator
+from .validators import year_validator
 
 User = get_user_model()
 
@@ -73,21 +73,21 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Film',
     )
-    text = models.TextField('Текст отзыва')
+    text = models.TextField('Review text')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='Author'
     )
     score = models.PositiveSmallIntegerField(
-        'Рейтинг',
+        'Rating',
         validators=[
-            MinValueValidator(1, 'Допустимы значения от 1 до 10'),
-            MaxValueValidator(10, 'Допустимы значения от 1 до 10')
+            MinValueValidator(1, 'Valid values are from 1 to 10'),
+            MaxValueValidator(10, 'Valid values are from 1 to 10')
         ]
     )
     pub_date = models.DateTimeField(
-        'Дата публикации',
+        'Pub date',
         auto_now_add=True,
         db_index=True
     )
@@ -107,14 +107,14 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Review'
     )
-    text = models.TextField('Текст комментария')
+    text = models.TextField('Comment text')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='comments',
         verbose_name='Author'
     )
     pub_date = models.DateTimeField(
-        'Дата публикации', auto_now_add=True
+        'Pub date', auto_now_add=True
     )
 
     class Meta:

@@ -19,18 +19,18 @@ class User(AbstractUser):
         max_length=4000,
         null=True,
         blank=True,
-        verbose_name='Биография'
+        verbose_name='Biography'
     )
     email = models.EmailField(
         unique=True,
         db_index=True,
-        verbose_name='Почта',
+        verbose_name='Mail',
     )
     role = models.CharField(
         max_length=30,
         choices=Roles.choices,
         default=Roles.USER,
-        verbose_name='Роль'
+        verbose_name='Role'
     )
 
     @property
