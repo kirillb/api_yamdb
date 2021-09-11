@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -24,6 +26,11 @@ class SignupSerializer(serializers.Serializer):
     email = serializers.EmailField(
         validators=(UniqueValidator(queryset=User.objects.all()),)
     )
+
+    def validate_username(self, data):
+        if data == 'me':
+            raise ValidationError(message='Username "me" is not allowed')
+        return data
 
 
 class GenTokenSerializer(serializers.Serializer):

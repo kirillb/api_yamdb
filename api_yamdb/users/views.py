@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -53,14 +54,8 @@ class SignupView(APIView):
         serializer = SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        email = request.data.get('email')
-        username = request.data.get('username')
-
-        if username == 'me':
-            return Response(
-                {'username': ['username "me" is not allowed']},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        email = serializer.validated_data.get('email')
+        username = serializer.validated_data.get('username')
 
         user, is_created = User.objects.get_or_create(
             email=email,
@@ -76,7 +71,7 @@ class SignupView(APIView):
         send_mail(
             'Confirmation code - API tamdb',
             f'Confirmation code is {confirmation_code}',
-            None,
+            settings.EMAIL_ORIGIN,
             (email, )
         )
 
