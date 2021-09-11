@@ -14,14 +14,14 @@ REPEATED_REVIEW_MESSAGE = 'На одно произведение можно д�
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('name', 'slug')
         model = Category
+        exclude = ('id',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('name', 'slug')
         model = Genre
+        exclude = ('id',)
 
 
 class TitleSerializerGet(serializers.ModelSerializer):

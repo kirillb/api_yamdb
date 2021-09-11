@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
@@ -9,16 +9,10 @@ from users.permissions import (IsAdmin, IsAdminOrReadOnly, IsAuthor,
                                IsModerator, IsReadOnly)
 
 from .filters import TitleFilter
+from .mixins import CreateListDestroy
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, TitleSerializer,
                           TitleSerializerGet)
-
-
-class CreateListDestroy(mixins.CreateModelMixin,
-                        mixins.ListModelMixin,
-                        mixins.DestroyModelMixin,
-                        viewsets.GenericViewSet):
-    pass
 
 
 class CategoryViewSet(CreateListDestroy):

@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from api.validators import year_validator
 
 User = get_user_model()
 
@@ -36,7 +39,12 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(verbose_name='title', max_length=256)
-    year = models.IntegerField(verbose_name='year of issue')
+    year = models.PositiveSmallIntegerField(
+        verbose_name='year of issue',
+        validators=[year_validator],
+        blank=True,
+        null=True
+    )
     description = models.TextField(
         verbose_name='description',
         blank=True,
@@ -66,17 +74,25 @@ class Review(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='Фильм',
+        verbose_name='Film',
     )
     text = models.TextField('Текст отзыва')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='Автор'
+        verbose_name='Author'
     )
-    score = models.IntegerField('Рейтинг')
+    score = models.PositiveSmallIntegerField(
+        'Рейтинг',
+        validators=[
+            MinValueValidator(1, 'Допустимы значения от 1 до 10'),
+            MaxValueValidator(10, 'Допустимы значения от 1 до 10')
+        ]
+    )
     pub_date = models.DateTimeField(
-        'Дата публикации', auto_now_add=True
+        'Дата публикации',
+        auto_now_add=True,
+        db_index=True
     )
 
     class Meta:
@@ -92,13 +108,13 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Отзыв'
+        verbose_name='Review'
     )
     text = models.TextField('Текст комментария')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Автор'
+        verbose_name='Author'
     )
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
