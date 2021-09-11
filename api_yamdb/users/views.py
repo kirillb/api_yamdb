@@ -57,12 +57,6 @@ class SignupView(APIView):
         email = serializer.validated_data.get('email')
         username = serializer.validated_data.get('username')
 
-        if username == 'me':
-            return Response(
-                {'username': ['username "me" is not allowed']},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         user, is_created = User.objects.get_or_create(
             email=email,
             username=username
